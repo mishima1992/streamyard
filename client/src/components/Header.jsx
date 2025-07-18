@@ -9,7 +9,7 @@ const Header = () => {
 
     const handleLogout = () => {
         logout();
-        toast.success('Anda berhasil logout');
+        toast.success('You have been logged out.');
         navigate('/login');
     };
 
