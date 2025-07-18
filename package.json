@@ -1,0 +1,16 @@
+{
+  "name": "StreamYard",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "dev": "concurrently \"yarn --cwd server dev\" \"yarn --cwd client dev\"",
+    "install-all": "yarn install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
