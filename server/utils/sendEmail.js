@@ -1,5 +1,3 @@
-import fetch from 'node-fetch'; // Pastikan node-fetch terinstal jika menggunakan Node < v18
-
 const sendEmail = async (options) => {
   const brevoApiUrl = 'https://api.brevo.com/v3/smtp/email';
 
