@@ -9,24 +9,25 @@ const RegisterPage = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
-    const { register } = useAuth();
+    const { register, login } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (password !== confirmPassword) {
-            return toast.error('Password tidak cocok!');
+            return toast.error('Passwords do not match!');
         }
         setLoading(true);
         try {
-            const response = await register(username, email, password);
-             // After registering, we log the user in automatically
-            localStorage.setItem('userInfo', JSON.stringify(response.data));
-            toast.success('Registrasi berhasil! Anda telah login.');
+            await register(username, email, password);
+            toast.success('Registration successful! Logging you in...');
+            // Automatically log in the user after successful registration
+            await login(email, password);
             navigate('/dashboard');
         } catch (error) {
-            const errorMessage = error.response?.data?.message || 'Gagal untuk mendaftar. Silakan coba lagi.';
+            const errorMessage = error.response?.data?.message || 'Failed to register. Please try again.';
             toast.error(errorMessage);
+        } finally {
             setLoading(false);
         }
     };
@@ -34,7 +35,7 @@ const RegisterPage = () => {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-900">
             <div className="bg-gray-800 p-8 rounded-lg shadow-xl w-full max-w-md">
-                <h2 className="text-3xl font-bold text-white text-center mb-6">Buat Akun Baru</h2>
+                <h2 className="text-3xl font-bold text-white text-center mb-6">Create a New Account</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
                         <label className="block text-gray-300 mb-2" htmlFor="username">Username</label>
@@ -58,18 +59,18 @@ const RegisterPage = () => {
                         />
                     </div>
                     <div className="mb-6">
-                        <label className="block text-gray-300 mb-2" htmlFor="confirmPassword">Konfirmasi Password</label>
+                        <label className="block text-gray-300 mb-2" htmlFor="confirmPassword">Confirm Password</label>
                         <input
                             type="password" id="confirmPassword" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
                             className="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:outline-none focus:border-blue-500" required
                         />
                     </div>
                     <button type="submit" disabled={loading} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition duration-300 disabled:bg-blue-400">
-                        {loading ? 'Mendaftar...' : 'Register'}
+                        {loading ? 'Registering...' : 'Register'}
                     </button>
                 </form>
                 <p className="text-center text-gray-400 mt-6">
-                    Sudah punya akun? <Link to="/login" className="text-blue-400 hover:underline">Login di sini</Link>
+                    Already have an account? <Link to="/login" className="text-blue-400 hover:underline">Login here</Link>
                 </p>
             </div>
         </div>
