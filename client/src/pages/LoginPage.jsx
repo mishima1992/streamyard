@@ -15,10 +15,10 @@ const LoginPage = () => {
         setLoading(true);
         try {
             await authLogin(login, password);
-            toast.success('Login berhasil!');
+            toast.success('Login successful!');
             navigate('/dashboard');
         } catch (error) {
-            const errorMessage = error.response?.data?.message || 'Gagal untuk login. Silakan coba lagi.';
+            const errorMessage = error.response?.data?.message || 'Failed to login. Please try again.';
             toast.error(errorMessage);
             setLoading(false);
         }
@@ -31,7 +31,7 @@ const LoginPage = () => {
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
                         <label className="block text-gray-300 mb-2" htmlFor="login">
-                            Username atau Email
+                            Username or Email
                         </label>
                         <input
                             type="text"
@@ -64,7 +64,7 @@ const LoginPage = () => {
                     </button>
                 </form>
                 <p className="text-center text-gray-400 mt-6">
-                    Belum punya akun? <Link to="/register" className="text-blue-400 hover:underline">Daftar di sini</Link>
+                    Don't have an account? <Link to="/register" className="text-blue-400 hover:underline">Register here</Link>
                 </p>
             </div>
         </div>
