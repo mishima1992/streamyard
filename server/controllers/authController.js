@@ -4,16 +4,12 @@ import crypto from 'crypto';
 import { validationResult } from 'express-validator';
 import sendEmail from '../utils/sendEmail.js';
 
-// Helper to generate JWT
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: '30d',
   });
 };
 
-// @desc    Register a new user and send verification email
-// @route   POST /api/auth/register
-// @access  Public
 export const registerUser = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -30,17 +26,15 @@ export const registerUser = async (req, res) => {
 
     const user = new User({ username, email, password });
 
-    // Create verification token
     const verificationToken = crypto.randomBytes(32).toString('hex');
     user.emailVerificationToken = crypto
       .createHash('sha256')
       .update(verificationToken)
       .digest('hex');
-    user.emailVerificationTokenExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+    user.emailVerificationTokenExpires = Date.now() + 10 * 60 * 1000;
 
     await user.save();
 
-    // Send verification email
     const verificationUrl = `${process.env.CLIENT_URL}/verify-email/${verificationToken}`;
     const message = `
       <h1>Please verify your email address</h1>
@@ -63,9 +57,6 @@ export const registerUser = async (req, res) => {
   }
 };
 
-// @desc    Verify email address
-// @route   GET /api/auth/verify-email/:token
-// @access  Public
 export const verifyEmail = async (req, res) => {
     try {
         const hashedToken = crypto
@@ -73,13 +64,18 @@ export const verifyEmail = async (req, res) => {
             .update(req.params.token)
             .digest('hex');
 
-        const user = await User.findOne({
-            emailVerificationToken: hashedToken,
-            emailVerificationTokenExpires: { $gt: Date.now() },
-        });
+        const user = await User.findOne({ emailVerificationToken: hashedToken });
 
         if (!user) {
-            return res.status(400).json({ message: 'Invalid or expired verification token.' });
+            return res.status(400).json({ message: 'Invalid verification token.' });
+        }
+
+        if (user.isEmailVerified) {
+            return res.json({ message: 'Email has already been verified. You can now log in.' });
+        }
+
+        if (user.emailVerificationTokenExpires < Date.now()) {
+            return res.status(400).json({ message: 'Verification token has expired. Please try registering again to get a new link.' });
         }
 
         user.isEmailVerified = true;
@@ -88,17 +84,14 @@ export const verifyEmail = async (req, res) => {
         await user.save();
 
         res.json({ message: 'Email verified successfully. You can now log in.' });
+
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server Error' });
     }
 };
 
-// @desc    Auth user & get token (Login)
-// @route   POST /api/auth/login
-// @access  Public
 export const loginUser = async (req, res) => {
-  // ... (validation logic remains the same)
   const { login, password } = req.body;
 
   try {
@@ -126,7 +119,6 @@ export const loginUser = async (req, res) => {
   }
 };
 
-// ... (getUserProfile remains the same) ...
 export const getUserProfile = async (req, res) => {
     const user = await User.findById(req.user.id).select('-password');
     if (user) {
