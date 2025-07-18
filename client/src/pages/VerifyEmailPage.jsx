@@ -1,13 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 
 const VerifyEmailPage = () => {
     const { token } = useParams();
-    const [status, setStatus] = useState('verifying'); // 'verifying', 'success', 'error'
+    const [status, setStatus] = useState('verifying');
     const [message, setMessage] = useState('Verifying your email, please wait...');
+    const effectRan = useRef(false);
 
     useEffect(() => {
+        if (effectRan.current === true && process.env.NODE_ENV === 'development') {
+            return;
+        }
+
         const verify = async () => {
             if (!token) {
                 setStatus('error');
@@ -24,7 +29,12 @@ const VerifyEmailPage = () => {
                 setMessage(errorMessage);
             }
         };
+
         verify();
+
+        return () => {
+            effectRan.current = true;
+        };
     }, [token]);
 
     return (
