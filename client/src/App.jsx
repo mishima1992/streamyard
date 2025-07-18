@@ -1,32 +1,29 @@
-import { useState, useEffect } from 'react';
-import './App.css';
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import Header from './components/Header';
+import PrivateRoute from './components/PrivateRoute';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import DashboardPage from './pages/DashboardPage';
 
 function App() {
-  const [message, setMessage] = useState('');
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch('/api/test')
-      .then((res) => res.json())
-      .then((data) => {
-        setMessage(data.message);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setMessage('Failed to connect to the server.');
-        setLoading(false);
-      });
-  }, []);
-
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>React + Node.js Monorepo</h1>
-        <p>
-          {loading ? 'Loading...' : `Server says: "${message}"`}
-        </p>
-      </header>
+    <div className="bg-gray-900 text-white min-h-screen">
+      <Header />
+      <main>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/" element={<LoginPage />} /> {/* Default to login */}
+
+          {/* Private Routes */}
+          <Route path='/dashboard' element={<PrivateRoute />}>
+            <Route path='/dashboard' element={<DashboardPage />}/>
+          </Route>
+          
+        </Routes>
+      </main>
     </div>
   );
 }
