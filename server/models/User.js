@@ -32,6 +32,8 @@ const userSchema = mongoose.Schema(
     emailVerificationTokenExpires: Date,
     passwordResetToken: String,
     passwordResetTokenExpires: Date,
+    ssoToken: String,
+    ssoTokenExpires: Date,
     role: {
       type: String,
       enum: ['user', 'admin'],
@@ -57,7 +59,7 @@ const userSchema = mongoose.Schema(
       paddleSubscriptionId: String,
       storageQuotaBytes: {
         type: Number,
-        default: 1073741824, // 1 GB for free users
+        default: 1073741824,
       },
       storageUsedBytes: {
         type: Number,
@@ -65,7 +67,7 @@ const userSchema = mongoose.Schema(
       },
       maxBitrateKbps: {
         type: Number,
-        default: 4000, // 4000 kbps for free users
+        default: 4000,
       },
     },
   },
@@ -74,7 +76,6 @@ const userSchema = mongoose.Schema(
   }
 );
 
-// Middleware to hash password before saving
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     return next();
@@ -84,7 +85,6 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-// Method to compare entered password with hashed password
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
