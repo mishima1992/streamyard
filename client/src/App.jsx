@@ -7,6 +7,7 @@ import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
 import VideosPage from './pages/VideosPage';
+import SSOLoginPage from './pages/SSOLoginPage';
 
 const TermsPage = () => <div className="p-8"><h1>Terms of Service</h1><p>Content to be added later.</p></div>;
 const PrivacyPage = () => <div className="p-8"><h1>Privacy Policy</h1><p>Content to be added later.</p></div>;
@@ -24,6 +25,7 @@ const AuthRoutes = () => (
 
 const MainRoutes = () => (
   <Routes>
+    <Route path="/sso-login" element={<SSOLoginPage />} />
     <Route element={<PrivateRoute />}>
       <Route path="/dashboard" element={<DashboardPage />} />
       <Route path="/videos" element={<VideosPage />} />
