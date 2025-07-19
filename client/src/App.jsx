@@ -8,7 +8,8 @@ import DashboardPage from './pages/DashboardPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
 import VideosPage from './pages/VideosPage';
 import SSOLoginPage from './pages/SSOLoginPage';
-import LogoutPage from './pages/LogoutPage';
+import LogoutPage from './pages.LogoutPage';
+import ProfilePage from './pages/ProfilePage';
 
 const TermsPage = () => <div className="p-8"><h1>Terms of Service</h1><p>Content to be added later.</p></div>;
 const PrivacyPage = () => <div className="p-8"><h1>Privacy Policy</h1><p>Content to be added later.</p></div>;
@@ -31,6 +32,7 @@ const MainRoutes = () => (
     <Route element={<PrivateRoute />}>
       <Route path="/dashboard" element={<DashboardPage />} />
       <Route path="/videos" element={<VideosPage />} />
+      <Route path="/profile" element={<ProfilePage />} />
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Route>
   </Routes>
