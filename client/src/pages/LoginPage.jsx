@@ -7,17 +7,20 @@ const LoginPage = () => {
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
-    const { login: authLogin } = useAuth();
+    const { login: authLogin, api } = useAuth();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         try {
             await authLogin(login, password);
-            toast.success('Login successful! Redirecting to dashboard...');
+            toast.success('Login successful! Generating secure session...');
             
+            const { data } = await api.get('/auth/sso/generate');
+            const ssoToken = data.ssoToken;
+
             const mainDomain = import.meta.env.VITE_MAIN_DOMAIN;
-            const targetUrl = `https://${mainDomain}/dashboard`;
+            const targetUrl = `https://${mainDomain}/sso-login?token=${ssoToken}`;
             
             window.location.replace(targetUrl);
 
