@@ -121,6 +121,31 @@ export const getUserVideos = async (req, res) => {
   }
 };
 
+export const renameVideo = async (req, res) => {
+  const { title } = req.body;
+  if (!title) {
+    return res.status(400).json({ message: 'Title is required.' });
+  }
+
+  try {
+    const video = await Video.findById(req.params.id);
+
+    if (!video) {
+      return res.status(404).json({ message: 'Video not found' });
+    }
+
+    if (video.user.toString() !== req.user.id) {
+      return res.status(401).json({ message: 'User not authorized' });
+    }
+
+    video.title = title;
+    const updatedVideo = await video.save();
+    res.json(updatedVideo);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error renaming video.' });
+  }
+};
+
 export const deleteVideo = async (req, res) => {
   try {
     const video = await Video.findById(req.params.id);
