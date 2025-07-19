@@ -4,11 +4,12 @@ import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
 const Header = () => {
-    const { currentUser } = useAuth();
+    const { currentUser, logout } = useAuth();
     const authLogoutUrl = `https://${import.meta.env.VITE_AUTH_DOMAIN}/logout`;
 
     const handleLogout = () => {
         toast.success('You have been logged out.');
+        logout();
         window.location.href = authLogoutUrl;
     };
 
@@ -26,7 +27,7 @@ const Header = () => {
                             <span className="text-gray-400">|</span>
                             <div className="flex items-center space-x-4">
                                 <Link to="/profile">
-                                    <img src={currentUser.avatar} alt={currentUser.username} className="w-8 h-8 rounded-full" />
+                                    <img src={currentUser.avatar?.startsWith('/') ? currentUser.avatar : 'https://placehold.co/200x200/EFEFEF/333333?text=User'} alt={currentUser.username} className="w-8 h-8 rounded-full" />
                                 </Link>
                                 <Link to="/profile" className="font-medium hover:text-gray-300">{currentUser.username}</Link>
                                 <button
