@@ -14,6 +14,8 @@ const SSOLoginPage = () => {
 
         const verifyToken = async () => {
             const token = searchParams.get('token');
+            const redirectPath = searchParams.get('redirect');
+            
             if (!token) {
                 navigate('/login', { replace: true });
                 return;
@@ -23,7 +25,7 @@ const SSOLoginPage = () => {
                 const { data } = await axios.post('/api/auth/sso/verify', { ssoToken: token });
                 localStorage.setItem('userInfo', JSON.stringify(data));
                 setCurrentUser(data);
-                navigate('/dashboard', { replace: true });
+                navigate(redirectPath || '/dashboard', { replace: true });
             } catch (error) {
                 navigate('/login', { replace: true });
             }
