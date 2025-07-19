@@ -3,14 +3,15 @@ import {
   registerUser,
   loginUser,
   getUserProfile,
-  verifyEmail, // Import the new controller
+  verifyEmail,
+  generateSsoToken,
+  verifySsoToken,
 } from '../controllers/authController.js';
 import { body } from 'express-validator';
 import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// ... (validations remain the same) ...
 const registerValidation = [
   body('username', 'Username is required').not().isEmpty(),
   body('email', 'Please include a valid email').isEmail(),
@@ -22,10 +23,13 @@ const loginValidation = [
     body('password', 'Password is required').exists()
 ];
 
-
 router.post('/register', registerValidation, registerUser);
-router.get('/verify-email/:token', verifyEmail); // Add this new route
+router.get('/verify-email/:token', verifyEmail);
 router.post('/login', loginValidation, loginUser);
 router.get('/profile', protect, getUserProfile);
+
+router.get('/sso/generate', protect, generateSsoToken);
+router.post('/sso/verify', verifySsoToken);
+
 
 export default router;
