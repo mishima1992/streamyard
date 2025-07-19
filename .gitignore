@@ -39,5 +39,7 @@ Thumbs.db
 *.sln
 *.sw?
 
-/server/videos
-/server/thumbnail
+server/uploads/
+/server/uploads/
+uploads/
+/uploads/
