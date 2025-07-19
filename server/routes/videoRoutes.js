@@ -5,6 +5,7 @@ import {
   uploadVideo,
   importFromGoogleDrive,
   getUserVideos,
+  deleteVideo,
 } from '../controllers/videoController.js';
 
 const router = express.Router();
@@ -17,5 +18,8 @@ router.route('/upload')
 
 router.route('/import/google-drive')
   .post(protect, importFromGoogleDrive);
+
+router.route('/:id')
+  .delete(protect, deleteVideo);
 
 export default router;
