@@ -1,6 +1,6 @@
 import Video from '../models/Video.js';
 import axios from 'axios';
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 import fs from 'fs';
 import path from 'path';
 
@@ -66,9 +66,9 @@ export const importFromGoogleDrive = async (req, res) => {
     const videoTitle = $('meta[property="og:title"]').attr('content') || `${fileId}.mp4`;
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
     const serverFilename = `${req.user.id}-${uniqueSuffix}-${path.extname(videoTitle) || '.mp4'}`;
-    const uploadPath = 'uploads/videos/';
-    fs.mkdirSync(uploadPath, { recursive: true });
-    const localFilePath = path.join(uploadPath, serverFilename);
+    const userSpecificPath = `uploads/videos/${req.user.username}/`;
+    fs.mkdirSync(userSpecificPath, { recursive: true });
+    const localFilePath = path.join(userSpecificPath, serverFilename);
 
     const writer = fs.createWriteStream(localFilePath);
     const downloadResponse = await axios({
