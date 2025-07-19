@@ -1,12 +1,9 @@
 import React, { useEffect, useRef } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
-import { useAuth } from '../context/AuthContext';
 
 const SSOLoginPage = () => {
     const [searchParams] = useSearchParams();
-    const navigate = useNavigate();
-    const { setCurrentUser } = useAuth();
     const effectRan = useRef(false);
 
     useEffect(() => {
@@ -15,19 +12,20 @@ const SSOLoginPage = () => {
         const verifyToken = async () => {
             const token = searchParams.get('token');
             const redirectPath = searchParams.get('redirect');
+            const authLoginUrl = import.meta.env.VITE_AUTH_LOGIN_URL || '/';
             
             if (!token) {
-                navigate('/login', { replace: true });
+                window.location.replace(authLoginUrl);
                 return;
             }
 
             try {
                 const { data } = await axios.post('/api/auth/sso/verify', { ssoToken: token });
                 localStorage.setItem('userInfo', JSON.stringify(data));
-                setCurrentUser(data);
-                navigate(redirectPath || '/dashboard', { replace: true });
+                
+                window.location.replace(redirectPath || '/dashboard');
             } catch (error) {
-                navigate('/login', { replace: true });
+                window.location.replace(authLoginUrl);
             }
         };
 
@@ -36,7 +34,7 @@ const SSOLoginPage = () => {
         return () => {
             effectRan.current = true;
         };
-    }, [searchParams, navigate, setCurrentUser]);
+    }, [searchParams]);
 
     return (
         <div className="flex justify-center items-center h-screen">
