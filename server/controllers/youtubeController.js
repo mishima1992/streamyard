@@ -1,7 +1,7 @@
 import { google } from 'googleapis';
 import User from '../models/User.js';
 import crypto from 'crypto';
-onsole.log('REDIRECT URI FROM ENV:', process.env.GOOGLE_REDIRECT_URI); // <-- TAMBAHKAN BARIS INI
+console.log('REDIRECT URI FROM ENV:', process.env.GOOGLE_REDIRECT_URI); // <-- TAMBAHKAN BARIS INI
 
 const oAuth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
