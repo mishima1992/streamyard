@@ -1,11 +1,10 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 3000, // Kita akan jalankan client di port 3000
+    port: 3000,
     host: true,
     proxy: {
       '/api': {
@@ -13,6 +12,13 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       }
-    }
+    },
+    hmr: {
+      clientPort: 443
+    },
+    allowedHosts: [
+      'mainserver.streamyard.online',
+      'auth.streamyard.online',
+    ],
   }
 })
