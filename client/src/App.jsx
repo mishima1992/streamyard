@@ -8,7 +8,7 @@ import DashboardPage from './pages/DashboardPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
 import VideosPage from './pages/VideosPage';
 import SSOLoginPage from './pages/SSOLoginPage';
-import LogoutPage from './pages.LogoutPage';
+import LogoutPage from './pages/LogoutPage';
 import ProfilePage from './pages/ProfilePage';
 
 const TermsPage = () => <div className="p-8"><h1>Terms of Service</h1><p>Content to be added later.</p></div>;
