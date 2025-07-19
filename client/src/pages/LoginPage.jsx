@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
@@ -7,29 +7,54 @@ const LoginPage = () => {
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
-    const { login: authLogin, api } = useAuth();
+    const { login: authLogin, currentUser, api } = useAuth();
+    const [isAttemptingLogin, setIsAttemptingLogin] = useState(false);
+
+    useEffect(() => {
+        if (currentUser) {
+            const mainDomain = import.meta.env.VITE_MAIN_DOMAIN;
+            const targetUrl = `https://${mainDomain}/dashboard`;
+            window.location.replace(targetUrl);
+        }
+    }, [currentUser]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+        setIsAttemptingLogin(true);
         try {
             await authLogin(login, password);
-            toast.success('Login successful! Generating secure session...');
-            
-            const { data } = await api.get('/auth/sso/generate');
-            const ssoToken = data.ssoToken;
-
-            const mainDomain = import.meta.env.VITE_MAIN_DOMAIN;
-            const targetUrl = `https://${mainDomain}/sso-login?token=${ssoToken}`;
-            
-            window.location.replace(targetUrl);
-
         } catch (error) {
             const errorMessage = error.response?.data?.message || 'Failed to login. Please try again.';
             toast.error(errorMessage);
             setLoading(false);
+            setIsAttemptingLogin(false);
         }
     };
+
+    useEffect(() => {
+        if (isAttemptingLogin && currentUser) {
+            const generateAndRedirect = async () => {
+                try {
+                    toast.success('Login successful! Generating secure session...');
+                    const { data } = await api.get('/auth/sso/generate');
+                    const ssoToken = data.ssoToken;
+                    const mainDomain = import.meta.env.VITE_MAIN_DOMAIN;
+                    const targetUrl = `https://${mainDomain}/sso-login?token=${ssoToken}`;
+                    window.location.replace(targetUrl);
+                } catch (error) {
+                    toast.error('Failed to create a secure session. Please try again.');
+                    setLoading(false);
+                    setIsAttemptingLogin(false);
+                }
+            };
+            generateAndRedirect();
+        }
+    }, [currentUser, isAttemptingLogin, api]);
+
+    if (currentUser) {
+        return <div className="flex justify-center items-center h-screen"><p className="text-white">Redirecting...</p></div>;
+    }
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-900">
