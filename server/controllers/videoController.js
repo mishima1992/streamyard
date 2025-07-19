@@ -63,7 +63,14 @@ export const importFromGoogleDrive = async (req, res) => {
       finalDownloadUrl.searchParams.append(key, inputs[key]);
     }
     
-    const videoTitle = $('meta[property="og:title"]').attr('content') || `${fileId}.mp4`;
+    let videoTitle = $('.uc-name-size').clone().children().remove().end().text().trim();
+    if (!videoTitle) {
+      videoTitle = $('title').text().replace(' - Google Drive', '').trim();
+    }
+    if (!videoTitle) {
+      videoTitle = `${fileId}.mp4`;
+    }
+
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
     const serverFilename = `${req.user.id}-${uniqueSuffix}-${path.extname(videoTitle) || '.mp4'}`;
     const userSpecificPath = `uploads/videos/${req.user.username}/`;
@@ -111,5 +118,31 @@ export const getUserVideos = async (req, res) => {
     res.json(videos);
   } catch (error) {
     res.status(500).json({ message: 'Server error fetching videos.' });
+  }
+};
+
+export const deleteVideo = async (req, res) => {
+  try {
+    const video = await Video.findById(req.params.id);
+
+    if (!video) {
+      return res.status(404).json({ message: 'Video not found' });
+    }
+
+    if (video.user.toString() !== req.user.id) {
+      return res.status(401).json({ message: 'User not authorized' });
+    }
+
+    fs.unlink(video.path, (err) => {
+      if (err) {
+        console.error('Failed to delete video file from server:', err);
+      }
+    });
+
+    await Video.deleteOne({ _id: req.params.id });
+
+    res.json({ message: 'Video removed successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error deleting video.' });
   }
 };
