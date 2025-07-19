@@ -1,7 +1,6 @@
 import { google } from 'googleapis';
 import User from '../models/User.js';
 import crypto from 'crypto';
-console.log('REDIRECT URI FROM ENV:', process.env.GOOGLE_REDIRECT_URI); // <-- TAMBAHKAN BARIS INI
 
 const oAuth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
@@ -83,7 +82,7 @@ export const handleCallback = async (req, res) => {
         await user.save();
     }
     
-    res.redirect(`https://${process.env.VITE_MAIN_DOMAIN}/profile`);
+    res.redirect(`https://${process.env.MAIN_DOMAIN}/profile`);
   } catch (error) {
     res.status(500).send('Failed to link YouTube channel.');
   }
