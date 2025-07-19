@@ -25,8 +25,10 @@ const ProfilePage = () => {
     }, [api]);
 
     useEffect(() => {
-        fetchChannels();
-    }, [fetchChannels]);
+        if (currentUser) {
+            fetchChannels();
+        }
+    }, [fetchChannels, currentUser]);
 
     const handleLinkChannel = async () => {
         try {
@@ -102,6 +104,10 @@ const ProfilePage = () => {
         return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
     };
 
+    if (!currentUser) {
+        return <div className="text-center p-8">Loading profile...</div>;
+    }
+
     return (
         <div className="container mx-auto p-4 md:p-8">
             <h1 className="text-4xl font-bold text-white mb-8">Your Profile</h1>
@@ -110,7 +116,7 @@ const ProfilePage = () => {
                 <div className="lg:col-span-1 space-y-8">
                     <div className="bg-gray-800 p-6 rounded-lg shadow-xl text-center">
                         <div className="relative w-32 h-32 mx-auto">
-                            <img src={currentUser.avatar.startsWith('/') ? currentUser.avatar : 'https://placehold.co/200x200/EFEFEF/333333?text=User'} alt={currentUser.username} className="w-32 h-32 rounded-full mx-auto border-4 border-blue-500" />
+                            <img src={currentUser.avatar?.startsWith('/') ? currentUser.avatar : 'https://placehold.co/200x200/EFEFEF/333333?text=User'} alt={currentUser.username} className="w-32 h-32 rounded-full mx-auto border-4 border-blue-500" />
                             <button onClick={() => setIsAvatarModalOpen(true)} className="absolute bottom-0 right-0 bg-blue-600 hover:bg-blue-700 rounded-full p-2 text-white">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" /></svg>
                             </button>
@@ -125,9 +131,9 @@ const ProfilePage = () => {
                     <div className="bg-gray-800 p-6 rounded-lg shadow-xl">
                         <h3 className="text-xl font-semibold text-white mb-4">Subscription Details</h3>
                         <div className="space-y-3 text-gray-300">
-                            <p><strong>Plan:</strong> <span className="capitalize font-medium text-green-400">{currentUser.subscription.plan}</span></p>
-                            <p><strong>Storage:</strong> {formatBytes(currentUser.subscription.storageUsedBytes)} / {formatBytes(currentUser.subscription.storageQuotaBytes)}</p>
-                            <p><strong>Max Bitrate:</strong> {currentUser.subscription.maxBitrateKbps / 1000} Mbps</p>
+                            <p><strong>Plan:</strong> <span className="capitalize font-medium text-green-400">{currentUser.subscription?.plan || 'N/A'}</span></p>
+                            <p><strong>Storage:</strong> {formatBytes(currentUser.subscription?.storageUsedBytes)} / {formatBytes(currentUser.subscription?.storageQuotaBytes)}</p>
+                            <p><strong>Max Bitrate:</strong> {(currentUser.subscription?.maxBitrateKbps || 0) / 1000} Mbps</p>
                             <p><strong>Status:</strong> <span className="text-green-400">Active</span></p>
                         </div>
                     </div>
