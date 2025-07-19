@@ -26,6 +26,18 @@ const VideosPage = () => {
     fetchVideos();
   }, [fetchVideos]);
 
+  const handleRenameVideo = async (videoId, title) => {
+    try {
+      const { data } = await api.put(`/videos/${videoId}`, { title });
+      setVideos(videos.map((video) => (video._id === videoId ? data : video)));
+      toast.success('Video renamed successfully.');
+      return true;
+    } catch (error) {
+      toast.error('Failed to rename video.');
+      return false;
+    }
+  };
+
   const handleDeleteVideo = async (videoId) => {
     if (window.confirm('Are you sure you want to delete this video? This action cannot be undone.')) {
       try {
@@ -48,7 +60,11 @@ const VideosPage = () => {
       {loading ? (
         <p className="text-center text-gray-400">Loading video library...</p>
       ) : (
-        <VideoList videos={videos} onDelete={handleDeleteVideo} />
+        <VideoList 
+          videos={videos} 
+          onDelete={handleDeleteVideo}
+          onRename={handleRenameVideo}
+        />
       )}
     </div>
   );
