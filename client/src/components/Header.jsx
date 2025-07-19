@@ -23,6 +23,7 @@ const Header = () => {
                     {currentUser ? (
                         <>
                             <Link to="/dashboard" className="hover:text-gray-300">Dashboard</Link>
+                            <Link to="/videos" className="hover:text-gray-300">Videos</Link>
                             <span className="text-gray-400">|</span>
                             <div className="flex items-center space-x-4">
                                 <img src={currentUser.avatar} alt={currentUser.username} className="w-8 h-8 rounded-full" />
