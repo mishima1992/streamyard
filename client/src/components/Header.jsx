@@ -4,11 +4,12 @@ import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
 const Header = () => {
-    const { currentUser, logout } = useAuth();
+    const { currentUser } = useAuth();
+    const authLogoutUrl = `https://${import.meta.env.VITE_AUTH_DOMAIN}/logout`;
 
     const handleLogout = () => {
         toast.success('You have been logged out.');
-        logout();
+        window.location.href = authLogoutUrl;
     };
 
     return (
