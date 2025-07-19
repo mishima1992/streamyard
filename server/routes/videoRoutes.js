@@ -5,6 +5,7 @@ import {
   uploadVideo,
   importFromGoogleDrive,
   getUserVideos,
+  renameVideo,
   deleteVideo,
 } from '../controllers/videoController.js';
 
@@ -20,6 +21,7 @@ router.route('/import/google-drive')
   .post(protect, importFromGoogleDrive);
 
 router.route('/:id')
+  .put(protect, renameVideo)
   .delete(protect, deleteVideo);
 
 export default router;
