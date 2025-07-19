@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
@@ -8,15 +8,19 @@ const LoginPage = () => {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const { login: authLogin } = useAuth();
-    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         try {
             await authLogin(login, password);
-            toast.success('Login successful!');
-            navigate('/dashboard');
+            toast.success('Login successful! Redirecting to dashboard...');
+            
+            const mainDomain = import.meta.env.VITE_MAIN_DOMAIN;
+            const targetUrl = `https://${mainDomain}/dashboard`;
+            
+            window.location.replace(targetUrl);
+
         } catch (error) {
             const errorMessage = error.response?.data?.message || 'Failed to login. Please try again.';
             toast.error(errorMessage);
@@ -60,7 +64,7 @@ const LoginPage = () => {
                         disabled={loading}
                         className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition duration-300 disabled:bg-blue-400"
                     >
-                        {loading ? 'Loading...' : 'Login'}
+                        {loading ? 'Logging in...' : 'Login'}
                     </button>
                 </form>
                 <p className="text-center text-gray-400 mt-6">
