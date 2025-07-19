@@ -1,6 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-const VideoList = ({ videos, onDelete }) => {
+const VideoList = ({ videos, onDelete, onRename }) => {
+  const [editingVideoId, setEditingVideoId] = useState(null);
+  const [newTitle, setNewTitle] = useState('');
+
+  const handleRenameClick = (video) => {
+    setEditingVideoId(video._id);
+    setNewTitle(video.title);
+  };
+
+  const handleCancelClick = () => {
+    setEditingVideoId(null);
+    setNewTitle('');
+  };
+
+  const handleSaveClick = async (videoId) => {
+    const success = await onRename(videoId, newTitle);
+    if (success) {
+      setEditingVideoId(null);
+      setNewTitle('');
+    }
+  };
+
   const formatBytes = (bytes, decimals = 2) => {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -22,25 +43,41 @@ const VideoList = ({ videos, onDelete }) => {
                 <th scope="col" className="px-6 py-3">Source</th>
                 <th scope="col" className="px-6 py-3">Size</th>
                 <th scope="col" className="px-6 py-3">Uploaded On</th>
-                <th scope="col" className="px-6 py-3">Actions</th>
+                <th scope="col" className="px-6 py-3 w-48">Actions</th>
               </tr>
             </thead>
             <tbody>
               {videos.length > 0 ? (
                 videos.map((video) => (
                   <tr key={video._id} className="border-b border-gray-700 hover:bg-gray-600/50">
-                    <td className="px-6 py-4 font-medium text-white">{video.title}</td>
+                    <td className="px-6 py-4 font-medium text-white">
+                      {editingVideoId === video._id ? (
+                        <input
+                          type="text"
+                          value={newTitle}
+                          onChange={(e) => setNewTitle(e.target.value)}
+                          className="bg-gray-700 p-2 rounded w-full"
+                          autoFocus
+                        />
+                      ) : (
+                        video.title
+                      )}
+                    </td>
                     <td className="px-6 py-4 capitalize">{video.source.replace('-', ' ')}</td>
                     <td className="px-6 py-4">{formatBytes(video.size)}</td>
                     <td className="px-6 py-4">{new Date(video.createdAt).toLocaleDateString()}</td>
-                    <td className="px-6 py-4 space-x-4">
-                      <button className="font-medium text-blue-400 hover:underline">Rename</button>
-                      <button 
-                        onClick={() => onDelete(video._id)}
-                        className="font-medium text-red-400 hover:underline"
-                      >
-                        Delete
-                      </button>
+                    <td className="px-6 py-4">
+                      {editingVideoId === video._id ? (
+                        <div className="flex space-x-4">
+                          <button onClick={() => handleSaveClick(video._id)} className="font-medium text-green-400 hover:underline">Save</button>
+                          <button onClick={handleCancelClick} className="font-medium text-gray-400 hover:underline">Cancel</button>
+                        </div>
+                      ) : (
+                        <div className="flex space-x-4">
+                          <button onClick={() => handleRenameClick(video)} className="font-medium text-blue-400 hover:underline">Rename</button>
+                          <button onClick={() => onDelete(video._id)} className="font-medium text-red-400 hover:underline">Delete</button>
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))
