@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
@@ -9,14 +9,20 @@ const LoginPage = () => {
     const [loading, setLoading] = useState(false);
     const { login: authLogin, currentUser, api } = useAuth();
     const [isAttemptingLogin, setIsAttemptingLogin] = useState(false);
+    const [searchParams] = useSearchParams();
 
     useEffect(() => {
+        const redirectPath = searchParams.get('redirect');
+        if (redirectPath) {
+            toast('Please log in to continue.', { icon: '🔒' });
+        }
+
         if (currentUser) {
             const mainDomain = import.meta.env.VITE_MAIN_DOMAIN;
-            const targetUrl = `https://${mainDomain}/dashboard`;
+            const targetUrl = `https://${mainDomain}${redirectPath || '/dashboard'}`;
             window.location.replace(targetUrl);
         }
-    }, [currentUser]);
+    }, [currentUser, searchParams]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -40,7 +46,9 @@ const LoginPage = () => {
                     const { data } = await api.get('/auth/sso/generate');
                     const ssoToken = data.ssoToken;
                     const mainDomain = import.meta.env.VITE_MAIN_DOMAIN;
-                    const targetUrl = `https://${mainDomain}/sso-login?token=${ssoToken}`;
+                    const redirectPath = searchParams.get('redirect') || '/dashboard';
+                    
+                    const targetUrl = `https://${mainDomain}/sso-login?token=${ssoToken}&redirect=${encodeURIComponent(redirectPath)}`;
                     window.location.replace(targetUrl);
                 } catch (error) {
                     toast.error('Failed to create a secure session. Please try again.');
@@ -50,7 +58,7 @@ const LoginPage = () => {
             };
             generateAndRedirect();
         }
-    }, [currentUser, isAttemptingLogin, api]);
+    }, [currentUser, isAttemptingLogin, api, searchParams]);
 
     if (currentUser) {
         return <div className="flex justify-center items-center h-screen"><p className="text-white">Redirecting...</p></div>;
