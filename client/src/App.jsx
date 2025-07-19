@@ -8,6 +8,7 @@ import DashboardPage from './pages/DashboardPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
 import VideosPage from './pages/VideosPage';
 import SSOLoginPage from './pages/SSOLoginPage';
+import LogoutPage from './pages/LogoutPage';
 
 const TermsPage = () => <div className="p-8"><h1>Terms of Service</h1><p>Content to be added later.</p></div>;
 const PrivacyPage = () => <div className="p-8"><h1>Privacy Policy</h1><p>Content to be added later.</p></div>;
@@ -15,6 +16,7 @@ const PrivacyPage = () => <div className="p-8"><h1>Privacy Policy</h1><p>Content
 const AuthRoutes = () => (
   <Routes>
     <Route path="/login" element={<LoginPage />} />
+    <Route path="/logout" element={<LogoutPage />} />
     <Route path="/register" element={<RegisterPage />} />
     <Route path="/verify-email/:token" element={<VerifyEmailPage />} />
     <Route path="/terms" element={<TermsPage />} />
