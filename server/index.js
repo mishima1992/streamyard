@@ -7,6 +7,7 @@ import connectDB from './db.js';
 import authRoutes from './routes/authRoutes.js';
 import videoRoutes from './routes/videoRoutes.js';
 import youtubeRoutes from './routes/youtubeRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,6 +21,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/api/auth', authRoutes);
 app.use('/api/videos', videoRoutes);
 app.use('/api/youtube', youtubeRoutes);
+app.use('/api/users', userRoutes);
 
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
