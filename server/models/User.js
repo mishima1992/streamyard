@@ -48,6 +48,7 @@ const userSchema = mongoose.Schema(
         channelName: String,
         accessToken: String,
         refreshToken: String,
+        iv: String,
       },
     ],
     subscription: {
