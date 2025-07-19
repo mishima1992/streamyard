@@ -29,11 +29,8 @@ const MainRoutes = () => (
       <Route path="/videos" element={<VideosPage />} />
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Route>
-    <Route path="/login" element={<LoginPage />} />
-    <Route path="/register" element={<RegisterPage />} />
   </Routes>
 );
-
 
 function App() {
   const hostname = window.location.hostname;
