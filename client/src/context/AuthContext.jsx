@@ -43,6 +43,17 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         localStorage.removeItem('userInfo');
         setCurrentUser(null);
+        const authLoginUrl = import.meta.env.VITE_AUTH_LOGIN_URL;
+        if (authLoginUrl) {
+            window.location.replace(authLoginUrl);
+        }
+    };
+
+    const updateAuthInfo = (newUserInfo) => {
+        const storedInfo = JSON.parse(localStorage.getItem('userInfo'));
+        const updatedInfo = { ...storedInfo, ...newUserInfo };
+        localStorage.setItem('userInfo', JSON.stringify(updatedInfo));
+        setCurrentUser(updatedInfo);
     };
 
     useEffect(() => {
@@ -66,7 +77,8 @@ export const AuthProvider = ({ children }) => {
         register,
         login,
         logout,
-        api
+        api,
+        updateAuthInfo,
     };
 
     return (
