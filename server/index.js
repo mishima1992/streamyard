@@ -1,20 +1,26 @@
 import express from 'express';
 import 'dotenv/config';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import connectDB from './db.js';
 import authRoutes from './routes/authRoutes.js';
+import videoRoutes from './routes/videoRoutes.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// Middlewares
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// API Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/videos', videoRoutes);
 
-// Test Route (can be removed later)
+app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
+
 app.get('/api/test', (req, res) => {
   res.json({ message: 'Hello from the server! The API is working.' });
 });
