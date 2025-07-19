@@ -1,31 +1,49 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
+import axios from 'axios';
 
 const ProfilePage = () => {
     const [channels, setChannels] = useState([]);
     const [loading, setLoading] = useState(true);
-    const { api, currentUser } = useAuth();
+    const { currentUser } = useAuth();
 
     const fetchChannels = useCallback(async () => {
+        const token = JSON.parse(localStorage.getItem('userInfo'))?.token;
+        if (!token) return;
+
         try {
             setLoading(true);
-            const { data } = await api.get('/youtube/channels');
+            const { data } = await axios.get('/api/youtube/channels', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
             setChannels(data);
         } catch (error) {
             toast.error('Could not fetch linked channels.');
         } finally {
             setLoading(false);
         }
-    }, [api]);
+    }, []);
 
     useEffect(() => {
         fetchChannels();
     }, [fetchChannels]);
 
     const handleLinkChannel = async () => {
+        const token = JSON.parse(localStorage.getItem('userInfo'))?.token;
+        if (!token) {
+            toast.error('You must be logged in to link a channel.');
+            return;
+        }
+
         try {
-            const { data } = await api.get('/youtube/auth-url');
+            const authDomain = import.meta.env.VITE_AUTH_DOMAIN;
+            const fullAuthUrl = `https://${authDomain}/api/youtube/auth-url`;
+            
+            const { data } = await axios.get(fullAuthUrl, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            
             window.open(data.url, '_blank', 'noopener,noreferrer,width=600,height=700');
         } catch (error) {
             toast.error('Could not start the linking process.');
@@ -33,9 +51,14 @@ const ProfilePage = () => {
     };
 
     const handleUnlinkChannel = async (channelId) => {
+        const token = JSON.parse(localStorage.getItem('userInfo'))?.token;
+        if (!token) return;
+
         if (window.confirm('Are you sure you want to unlink this channel?')) {
             try {
-                await api.delete(`/youtube/channels/${channelId}`);
+                await axios.delete(`/api/youtube/channels/${channelId}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
                 toast.success('Channel unlinked successfully.');
                 fetchChannels();
             } catch (error) {
