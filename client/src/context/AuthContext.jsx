@@ -43,10 +43,6 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         localStorage.removeItem('userInfo');
         setCurrentUser(null);
-        const authLoginUrl = import.meta.env.VITE_AUTH_LOGIN_URL;
-        if (authLoginUrl) {
-            window.location.replace(authLoginUrl);
-        }
     };
 
     useEffect(() => {
