@@ -63,7 +63,7 @@ export const importFromGoogleDrive = async (req, res) => {
       finalDownloadUrl.searchParams.append(key, inputs[key]);
     }
     
-    let videoTitle = $('.uc-name-size').clone().children().remove().end().text().trim();
+    let videoTitle = $('.uc-name-size a').text().trim();
     if (!videoTitle) {
       videoTitle = $('title').text().replace(' - Google Drive', '').trim();
     }
