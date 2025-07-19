@@ -1,31 +1,27 @@
-import React, { useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import React from 'react';
+import { useLocation, Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const PrivateRoute = () => {
     const { currentUser, loading } = useAuth();
+    const location = useLocation();
     const authLoginUrl = import.meta.env.VITE_AUTH_LOGIN_URL;
-
-    useEffect(() => {
-        if (loading) {
-            return;
-        }
-        if (!currentUser) {
-            if (authLoginUrl) {
-                window.location.replace(authLoginUrl);
-            }
-        }
-    }, [currentUser, loading, authLoginUrl]);
 
     if (loading) {
         return (
             <div className="flex justify-center items-center h-screen">
-                <p className="text-white">Loading...</p>
+                <p className="text-white">Loading session...</p>
             </div>
         );
     }
 
-    return currentUser ? <Outlet /> : null;
+    if (!currentUser) {
+        const redirectUrl = `${authLoginUrl}?redirect=${location.pathname}`;
+        window.location.replace(redirectUrl);
+        return null;
+    }
+
+    return <Outlet />;
 };
 
 export default PrivateRoute;
