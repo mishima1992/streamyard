@@ -1,6 +1,6 @@
 import React from 'react';
 
-const VideoList = ({ videos }) => {
+const VideoList = ({ videos, onDelete }) => {
   const formatBytes = (bytes, decimals = 2) => {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -33,8 +33,14 @@ const VideoList = ({ videos }) => {
                     <td className="px-6 py-4 capitalize">{video.source.replace('-', ' ')}</td>
                     <td className="px-6 py-4">{formatBytes(video.size)}</td>
                     <td className="px-6 py-4">{new Date(video.createdAt).toLocaleDateString()}</td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 space-x-4">
                       <button className="font-medium text-blue-400 hover:underline">Rename</button>
+                      <button 
+                        onClick={() => onDelete(video._id)}
+                        className="font-medium text-red-400 hover:underline"
+                      >
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 ))
