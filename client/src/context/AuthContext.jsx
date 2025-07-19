@@ -16,16 +16,16 @@ export const AuthProvider = ({ children }) => {
     });
 
     api.interceptors.request.use((config) => {
-        const user = JSON.parse(localStorage.getItem('userInfo'));
-        if (user && user.token) {
-            config.headers.Authorization = `Bearer ${user.token}`;
+        try {
+            const user = JSON.parse(localStorage.getItem('userInfo'));
+            if (user && user.token) {
+                config.headers.Authorization = `Bearer ${user.token}`;
+            }
+        } catch (e) {
+            console.error("Could not parse user info for API interceptor", e);
         }
         return config;
     });
-
-    const register = (username, email, password) => {
-        return api.post('/auth/register', { username, email, password });
-    };
 
     const login = async (login, password) => {
         const { data } = await api.post('/auth/login', { login, password });
@@ -39,6 +39,10 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         localStorage.removeItem('userInfo');
         setCurrentUser(null);
+        const authLoginUrl = import.meta.env.VITE_AUTH_LOGIN_URL;
+        if (authLoginUrl) {
+            window.location.replace(authLoginUrl);
+        }
     };
 
     useEffect(() => {
@@ -57,6 +61,7 @@ export const AuthProvider = ({ children }) => {
 
     const value = {
         currentUser,
+        setCurrentUser,
         loading,
         register,
         login,
