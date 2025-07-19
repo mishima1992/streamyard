@@ -26,6 +26,18 @@ const VideosPage = () => {
     fetchVideos();
   }, [fetchVideos]);
 
+  const handleDeleteVideo = async (videoId) => {
+    if (window.confirm('Are you sure you want to delete this video? This action cannot be undone.')) {
+      try {
+        await api.delete(`/videos/${videoId}`);
+        toast.success('Video deleted successfully.');
+        setVideos(videos.filter((video) => video._id !== videoId));
+      } catch (error) {
+        toast.error('Failed to delete video.');
+      }
+    }
+  };
+
   return (
     <div className="container mx-auto p-4 md:p-8">
       <h1 className="text-4xl font-bold text-white mb-8">Video Management</h1>
@@ -36,7 +48,7 @@ const VideosPage = () => {
       {loading ? (
         <p className="text-center text-gray-400">Loading video library...</p>
       ) : (
-        <VideoList videos={videos} />
+        <VideoList videos={videos} onDelete={handleDeleteVideo} />
       )}
     </div>
   );
